@@ -1,0 +1,33 @@
+# Virtual Environment
+venv/
+
+# Database
+*.sqlite3
+
+# Migration files
+twinning_model_server/migrations/*
+
+# Byte-compiled files
+*.pyc
+*.pyo
+
+# Cache and logs
+__pycache__/
+*.cache
+*.log
+
+# System-specific and IDE files
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+*.vscode/
+
+# Static files
+staticfiles/
+
+# User-generated media files
+media/
+
+# Secrets
+.env

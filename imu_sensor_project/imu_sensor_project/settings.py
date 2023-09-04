@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -117,7 +118,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+#To ensure consistency and compatibility, it's generally recommended to define STATIC_URL with a leading slash (/)
+STATIC_URL = '/static/'
+
+# Add the path to your app's static files directory
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'imu_sensor_app/static')]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'imu_sensor_app/static_collected')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

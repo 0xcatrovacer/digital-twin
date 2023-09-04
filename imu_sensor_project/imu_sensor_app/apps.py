@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TwinningModelServerConfig(AppConfig):
+class ImuSensorAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'twinning_model_server'
+    name = 'imu_sensor_app'

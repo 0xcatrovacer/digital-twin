@@ -17,3 +17,12 @@ class SensorDataAPI(APIView):
             return Response({"message": "Sensor data received and saved successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"message": f"Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def sensor_data(request):
+    sensor_data = SensorData.objects.order_by('-timestamp').first()
+
+    context = {
+        'sensor_data': sensor_data,
+    }
+
+    return render(request, 'imu_sensor_app/sensor_data.html', context)

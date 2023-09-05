@@ -1,20 +1,70 @@
+{% load static %} <!-- Add this line at the top to load the static tag library -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>IMU Sensor Data</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        .container {
+            display: flex;
+        }
+        .left-side {
+            flex: 1;
+            padding: 20px;
+        }
+        .right-side {
+            flex: 1;
+            padding: 20px;
+        }
+        .sensor-image {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.2s ease; /* Add transition for smooth rotation */
+        }
+    </style>
 </head>
 <body>
     <h1>IMU Sensor Data</h1>
-    
-    <h2>Acceleration:</h2>
-    <p>x: {{ sensor_data.acceleration_x }}</p>
-    <p>y: {{ sensor_data.acceleration_y }}</p>
-    <p>z: {{ sensor_data.acceleration_z }}</p>
+    <div class="container">
+        <div class="left-side">
+            <h2>Acceleration:</h2>
+            <p>x: {{ sensor_data.acceleration_x }}</p>
+            <p>y: {{ sensor_data.acceleration_y }}</p>
+            <p>z: {{ sensor_data.acceleration_z }}</p>
 
-    <h2>Gyroscope:</h2>
-    <p>x: {{ sensor_data.gyroscope_x }}</p>
-    <p>y: {{ sensor_data.gyroscope_y }}</p>
-    <p>z: {{ sensor_data.gyroscope_z }}</p>
+            <h2>Gyroscope:</h2>
+            <p>x: {{ sensor_data.gyroscope_x }}</p>
+            <p>y: {{ sensor_data.gyroscope_y }}</p>
+            <p>z: {{ sensor_data.gyroscope_z }}</p>
+        </div>
+        <div class="right-side">
+            <h2>Sensor Image:</h2>
+            <img class="sensor-image" src="{% static 'images/sensor.png' %}" alt="Sensor Image">
+        </div>
+    </div>
+
+    <script>
+        const sensorImage = document.querySelector('.sensor-image');
+
+        // Function to update the rotation of the sensor image
+        function updateRotation() {
+            const gyroscope_x = {{ sensor_data.gyroscope_x }} ? {{ sensor_data.gyroscope_x }} : 0;
+            const gyroscope_y = {{ sensor_data.gyroscope_y }}? {{ sensor_data.gyroscope_y }} : 0;
+            const gyroscope_z = {{ sensor_data.gyroscope_z }}? {{ sensor_data.gyroscope_z }} : 0;
+            // Calculate the rotation angles based on gyroscope values (adjust as needed)
+            const rotationX = gyroscope_x * 10; // Multiply by a factor for better visibility
+            const rotationY = gyroscope_y * 10;
+            const rotationZ = gyroscope_z * 10;
+
+            // Apply the rotation using CSS transform
+            sensorImage.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg)`;
+        }
+
+        // Initial rotation update
+        updateRotation();
+
+        // Periodically update the rotation (adjust the interval as needed)
+        setInterval(updateRotation, 1000); // Update every 1 second
+    </script>
 </body>
 </html>

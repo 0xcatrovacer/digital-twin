@@ -9,12 +9,18 @@ sensor_data = {
     'acceleration_y': 2.0,
     'acceleration_z': 3.0,
     'gyroscope_x': 0.1,
-    'gyroscope_y': 0.2,
-    'gyroscope_z': 0.3,
+    'gyroscope_y': 1.0,
+    'gyroscope_z': 1.0,
 }
 
+values = [str(value).encode('utf-8') for value in sensor_data.values()]
+
+# Convert the values to a space-separated byte string
+byte_string = b" ".join(values)
+
+
 # Send a POST request to your API endpoint with the sensor data
-response = requests.post(url, json=sensor_data)
+response = requests.post(url, data=byte_string)
 
 # Check the response from the API
 if response.status_code == 201:

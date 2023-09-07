@@ -1,70 +1,200 @@
-{% load static %} <!-- Add this line at the top to load the static tag library -->
+{% load static %}
+<!-- Add this line at the top to load the static tag library -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>IMU Sensor Data</title>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <style>
-        .container {
-            display: flex;
-        }
-        .left-side {
-            flex: 1;
-            padding: 20px;
-        }
-        .right-side {
-            flex: 1;
-            padding: 20px;
-        }
-        .sensor-image {
-            max-width: 100%;
-            max-height: 100%;
-            transition: transform 0.2s ease; /* Add transition for smooth rotation */
-        }
+      body {
+          overflow: hidden;
+      }
+      .container {
+          display: flex;
+      }
+      .left-side {
+          flex: 1;
+          padding: 20px;
+      }
+      .right-side {
+          flex: 1;
+          padding: 20px;
+      }
+      {% comment %} .sensor-image {
+          max-width: 100%;
+          max-height: 100%;
+          transition: transform 0.2s ease; /* Add transition for smooth rotation */
+      } {% endcomment %}
+      #sensor-3d {
+          max-width: 100%;
+          max-height: 100%;
+          transition: transform 0.2s ease; /* Add transition for smooth rotation */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>IMU Sensor Data</h1>
     <div class="container">
-        <div class="left-side">
-            <h2>Acceleration:</h2>
-            <p>x: {{ sensor_data.acceleration_x }}</p>
-            <p>y: {{ sensor_data.acceleration_y }}</p>
-            <p>z: {{ sensor_data.acceleration_z }}</p>
+      <div class="left-side">
+        <h2>Acceleration:</h2>
+        <p>x: {{ sensor_data.acceleration_x }}</p>
+        <p>y: {{ sensor_data.acceleration_y }}</p>
+        <p>z: {{ sensor_data.acceleration_z }}</p>
 
-            <h2>Gyroscope:</h2>
-            <p>x: {{ sensor_data.gyroscope_x }}</p>
-            <p>y: {{ sensor_data.gyroscope_y }}</p>
-            <p>z: {{ sensor_data.gyroscope_z }}</p>
-        </div>
-        <div class="right-side">
-            <h2>Sensor Image:</h2>
-            <img class="sensor-image" src="{% static 'images/sensor.png' %}" alt="Sensor Image">
-        </div>
+        <h2>Gyroscope:</h2>
+        <p>x: {{ sensor_data.gyroscope_x }}</p>
+        <p>y: {{ sensor_data.gyroscope_y }}</p>
+        <p>z: {{ sensor_data.gyroscope_z }}</p>
+      </div>
+      <div class="right-side">
+        <h2>3D Model:</h2>
+        {% comment %}
+        <img
+          class="sensor-image"
+          src="{% static 'images/sensor.png' %}"
+          alt="Sensor Image"
+        />
+        {% endcomment %}
+        <div
+          id="sensor-3d"
+          data-gyroscope-x="{{ sensor_data.gyroscope_x }}"
+          data-gyroscope-y="{{ sensor_data.gyroscope_y }}"
+          data-gyroscope-z="{{ sensor_data.gyroscope_z }}"
+        ></div>
+      </div>
     </div>
 
-    <script>
-        const sensorImage = document.querySelector('.sensor-image');
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"
+      integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg=="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script type="module">
+              {% comment %} const sensorImage = document.querySelector('.sensor-image');
 
-        // Function to update the rotation of the sensor image
-        function updateRotation() {
-            const gyroscope_x = {{ sensor_data.gyroscope_x }} ? {{ sensor_data.gyroscope_x }} : 0;
-            const gyroscope_y = {{ sensor_data.gyroscope_y }}? {{ sensor_data.gyroscope_y }} : 0;
-            const gyroscope_z = {{ sensor_data.gyroscope_z }}? {{ sensor_data.gyroscope_z }} : 0;
-            // Calculate the rotation angles based on gyroscope values (adjust as needed)
-            const rotationX = gyroscope_x * 10; // Multiply by a factor for better visibility
-            const rotationY = gyroscope_y * 10;
-            const rotationZ = gyroscope_z * 10;
+              // Function to update the rotation of the sensor image
+              function updateRotation() {
+                  const gyroscope_x = {{ sensor_data.gyroscope_x }} ? {{ sensor_data.gyroscope_x }} : 0;
+                  const gyroscope_y = {{ sensor_data.gyroscope_y }}? {{ sensor_data.gyroscope_y }} : 0;
+                  const gyroscope_z = {{ sensor_data.gyroscope_z }}? {{ sensor_data.gyroscope_z }} : 0;
+                  // Calculate the rotation angles based on gyroscope values (adjust as needed)
+                  const rotationX = gyroscope_x * 10; // Multiply by a factor for better visibility
+                  const rotationY = gyroscope_y * 10;
+                  const rotationZ = gyroscope_z * 10;
 
-            // Apply the rotation using CSS transform
-            sensorImage.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg)`;
+                  // Apply the rotation using CSS transform
+                  sensorImage.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg)`;
+              }
+
+              // Initial rotation update
+              updateRotation();
+
+              // Periodically update the rotation (adjust the interval as needed)
+              setInterval(updateRotation, 1000); // Update every 1 second {% endcomment %}
+
+
+
+              {% comment %} // Create a Three.js scene
+              const scene = new THREE.Scene();
+
+              // Create a camera and set its position
+              const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+              camera.position.z = 5;
+
+              // Create a WebGL renderer
+              const renderer = new THREE.WebGLRenderer();
+              renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+              const sensorElement = document.getElementById('sensor-3d');
+              const gyroscope_x = parseFloat(sensorElement.getAttribute('data-gyroscope-x'));
+              const gyroscope_y = parseFloat(sensorElement.getAttribute('data-gyroscope-y'));
+              const gyroscope_z = parseFloat(sensorElement.getAttribute('data-gyroscope-z'));
+
+              // Load the 3D model
+              const loader = new THREE.GLTFLoader(); // Use the GLTFLoader for .glb files
+              loader.load("{% static 'images/MPU9255.glb' %}", function (gltf) {
+                  const sensorModel = gltf.scene;
+                  scene.add(sensorModel);
+
+                  // Define the render function
+                  function animate() {
+                      requestAnimationFrame(animate);
+
+                      // Rotate the model based on gyroscope values
+                      if (sensorModel) {
+                          if (!isNaN(gyroscope_x) && !isNaN(gyroscope_y) && !isNaN(gyroscope_z)) {
+                              const rotationY = gyroscope_y * 10;
+                              const rotationZ = gyroscope_z * 10;
+                              const rotationX = gyroscope_x * 10;
+
+                              // Apply rotation to the model
+                              sensorModel.rotation.set(rotationX, rotationY, rotationZ);
+                          }
+                      }
+
+                      // Render the scene
+                      renderer.render(scene, camera);
+                  };
+
+                  animate(); // Start the animation loop
+              }); {% endcomment %}
+
+              import * as THREE from 'https://cdn.skypack.dev/three@0.136.0';
+              import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js';
+              {% comment %} import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js'; {% endcomment %}
+
+              const renderer = new THREE.WebGLRenderer();
+              const scene = new THREE.Scene();
+              const sensorElement = document.getElementById('sensor-3d');
+              const gyroscope_x = parseFloat(sensorElement.getAttribute('data-gyroscope-x'));
+              const gyroscope_y = parseFloat(sensorElement.getAttribute('data-gyroscope-y'));
+              const gyroscope_z = parseFloat(sensorElement.getAttribute('data-gyroscope-z'));
+              const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight);
+              let mesh;
+              {% comment %} const controls = new OrbitControls(camera, renderer.domElement); {% endcomment %}
+
+              renderer.setSize(window.innerWidth*0.75, window.innerHeight*0.75);
+              scene.background = new THREE.Color("white");
+              scene.add(new THREE.HemisphereLight(0xffffcc, 0x333399, 1.0));
+              camera.position.set(0, 0, -10);
+
+      new GLTFLoader().load("{% static 'images/MPU9255.glb' %}", function ({ scene: model }, animations) {
+        scene.add(model);
+
+        model.scale.setScalar(0.25);
+
+        camera.lookAt(model.position);
+
+        //controls.target.copy(model.position);
+
+        mesh = model;
+      });
+
+      function animate() {
+        if (mesh) {
+            if (!isNaN(gyroscope_x) && !isNaN(gyroscope_y) && !isNaN(gyroscope_z)) {
+                const rotationY = gyroscope_y * 180/Math.PI;
+                const rotationZ = gyroscope_z * 180/Math.PI;
+                const rotationX = gyroscope_x * 180/Math.PI;
+
+                // Apply rotation to the model
+                mesh.rotation.set(rotationX, rotationY, rotationZ);
+                //mesh.rotateX(rotationX);
+                //mesh.rotateY(rotationY);
+                //mesh.rotateZ(rotationZ);
+            }
         }
 
-        // Initial rotation update
-        updateRotation();
+        renderer.render(scene, camera);
 
-        // Periodically update the rotation (adjust the interval as needed)
-        setInterval(updateRotation, 1000); // Update every 1 second
+        //controls.update();
+
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+
+      document.getElementById('sensor-3d').appendChild(renderer.domElement);
     </script>
-</body>
+  </body>
 </html>

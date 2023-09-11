@@ -6,23 +6,23 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <style>
       body {
-          overflow: hidden;
+        overflow: hidden;
       }
       .container {
-          display: flex;
+        display: flex;
       }
       .left-side {
-          flex: 1;
-          padding: 20px;
+        flex: 1;
+        padding: 20px;
       }
       .right-side {
-          flex: 1;
-          padding: 20px;
+        flex: 1;
+        padding: 20px;
       }
       #sensor-3d {
-          max-width: 100%;
-          max-height: 100%;
-          transition: transform 0.2s ease; /* Add transition for smooth rotation */
+        max-width: 100%;
+        max-height: 100%;
+        transition: transform 0.2s ease; /* Add transition for smooth rotation */
       }
     </style>
   </head>
@@ -36,9 +36,9 @@
         <p>z: {{ sensor_data.acceleration_z }}</p>
 
         <h2>Gyroscope:</h2>
-        <p>x: {{ sensor_data.gyroscope_x }}</p>
-        <p>y: {{ sensor_data.gyroscope_y }}</p>
-        <p>z: {{ sensor_data.gyroscope_z }}</p>
+        <p id="gyroscope-x">x: {{ sensor_data.gyroscope_x }}</p>
+        <p id="gyroscope-y">y: {{ sensor_data.gyroscope_y }}</p>
+        <p id="gyroscope-z">z: {{ sensor_data.gyroscope_z }}</p>
       </div>
       <div class="right-side">
         <h2>3D Model:</h2>
@@ -52,52 +52,83 @@
     </div>
 
     <script type="module">
-              import * as THREE from 'https://cdn.skypack.dev/three@0.136.0';
-              import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js';
+      import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
+      import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
 
-              const renderer = new THREE.WebGLRenderer();
-              const scene = new THREE.Scene();
-              const sensorElement = document.getElementById('sensor-3d');
-              const gyroscope_x = parseFloat(sensorElement.getAttribute('data-gyroscope-x'));
-              const gyroscope_y = parseFloat(sensorElement.getAttribute('data-gyroscope-y'));
-              const gyroscope_z = parseFloat(sensorElement.getAttribute('data-gyroscope-z'));
-              const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight);
-              let mesh;
+      var socket = new WebSocket(
+        "ws://" + window.location.host + "/ws/sensor_data/"
+      );
 
-              renderer.setSize(window.innerWidth*0.75, window.innerHeight*0.75);
-              scene.background = new THREE.Color("white");
-              scene.add(new THREE.HemisphereLight(0xffffcc, 0x333399, 1.0));
-              camera.position.set(0, 0, -10);
+      socket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        // Update your HTML content here with the new sensor data
+        document.getElementById("gyroscope-x").textContent =
+          "x: " + data.gyroscope_x;
+        document.getElementById("gyroscope-y").textContent =
+          "y: " + data.gyroscope_y;
+        document.getElementById("gyroscope-z").textContent =
+          "z: " + data.gyroscope_z;
+      };
 
-      new GLTFLoader().load("{% static 'images/MPU9255.glb' %}", function ({ scene: model }, animations) {
-        scene.add(model);
+      const renderer = new THREE.WebGLRenderer();
+      const scene = new THREE.Scene();
+      const sensorElement = document.getElementById("sensor-3d");
+      const gyroscope_x = parseFloat(
+        sensorElement.getAttribute("data-gyroscope-x")
+      );
+      const gyroscope_y = parseFloat(
+        sensorElement.getAttribute("data-gyroscope-y")
+      );
+      const gyroscope_z = parseFloat(
+        sensorElement.getAttribute("data-gyroscope-z")
+      );
+      const camera = new THREE.PerspectiveCamera(
+        50,
+        window.innerWidth / window.innerHeight
+      );
+      let mesh;
 
-        model.scale.setScalar(0.25);
+      renderer.setSize(window.innerWidth * 0.75, window.innerHeight * 0.75);
+      scene.background = new THREE.Color("white");
+      scene.add(new THREE.HemisphereLight(0xffffcc, 0x333399, 1.0));
+      camera.position.set(0, 0, -10);
 
-        camera.lookAt(model.position);
+      new GLTFLoader().load(
+        "{% static 'images/MPU9255.glb' %}",
+        function ({ scene: model }, animations) {
+          scene.add(model);
 
-        mesh = model;
-      });
+          model.scale.setScalar(0.25);
+
+          camera.lookAt(model.position);
+
+          mesh = model;
+        }
+      );
 
       function animate() {
         if (mesh) {
-            if (!isNaN(gyroscope_x) && !isNaN(gyroscope_y) && !isNaN(gyroscope_z)) {
-                const rotationY = gyroscope_y * 180/Math.PI;
-                const rotationZ = gyroscope_z * 180/Math.PI;
-                const rotationX = gyroscope_x * 180/Math.PI;
+          if (
+            !isNaN(gyroscope_x) &&
+            !isNaN(gyroscope_y) &&
+            !isNaN(gyroscope_z)
+          ) {
+            const rotationY = (gyroscope_y * 180) / Math.PI;
+            const rotationZ = (gyroscope_z * 180) / Math.PI;
+            const rotationX = (gyroscope_x * 180) / Math.PI;
 
-                mesh.rotation.set(rotationX, rotationY, rotationZ);
-            }
+            mesh.rotation.set(rotationX, rotationY, rotationZ);
+          }
         }
 
         renderer.render(scene, camera);
 
         requestAnimationFrame(animate);
-      };
+      }
 
       animate();
 
-      document.getElementById('sensor-3d').appendChild(renderer.domElement);
+      document.getElementById("sensor-3d").appendChild(renderer.domElement);
     </script>
   </body>
 </html>

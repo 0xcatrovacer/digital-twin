@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-nb$oacbs8aje9akzoqi8_a3u6=*_^5i3=78-dsk7dy!h_j!35l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'imu_sensor_app',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'imu_sensor_project.wsgi.application'
+ASGI_APPLICATION = "imu_sensor_project.routing.application"
+
 
 
 # Database

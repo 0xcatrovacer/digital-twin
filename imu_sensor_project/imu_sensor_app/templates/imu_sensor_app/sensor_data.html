@@ -55,20 +55,16 @@
       import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
       import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
 
-      var socket = new WebSocket(
-        "ws://" + window.location.host + "/ws/sensor_data/"
-      );
+      var socket = new WebSocket("ws://" + window.location.host + "/ws/sensor_data/");
 
-      socket.onmessage = function (e) {
-        var data = JSON.parse(e.data);
-        // Update your HTML content here with the new sensor data
-        document.getElementById("gyroscope-x").textContent =
-          "x: " + data.gyroscope_x;
-        document.getElementById("gyroscope-y").textContent =
-          "y: " + data.gyroscope_y;
-        document.getElementById("gyroscope-z").textContent =
-          "z: " + data.gyroscope_z;
-      };
+  socket.onmessage = function (e) {
+    var data = JSON.parse(e.data);
+    // Update your HTML content here with the new sensor data
+    document.getAttribute("data-gyroscope-x").textContent = "x: " + data.gyroscope_x;
+    document.getAttribute("data-gyroscope-y").textContent = "y: " + data.gyroscope_y;
+    document.getAttribute("data-gyroscope-z").textContent = "z: " + data.gyroscope_z;
+  };
+
 
       const renderer = new THREE.WebGLRenderer();
       const scene = new THREE.Scene();

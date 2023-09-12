@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'rest_framework',
     'imu_sensor_app',
@@ -73,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'imu_sensor_project.wsgi.application'
 ASGI_APPLICATION = "imu_sensor_project.routing.application"
-
 
 
 # Database

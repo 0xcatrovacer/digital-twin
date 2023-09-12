@@ -82,9 +82,9 @@
       function animate() {
         if (mesh) {
             if (!isNaN(gyroscope_x) && !isNaN(gyroscope_y) && !isNaN(gyroscope_z)) {
-                const rotationY = gyroscope_y * 180/Math.PI;
-                const rotationZ = gyroscope_z * 180/Math.PI;
-                const rotationX = gyroscope_x * 180/Math.PI;
+                const rotationY = gyroscope_y;
+                const rotationZ = gyroscope_z;
+                const rotationX = gyroscope_x;
 
                 mesh.rotation.set(rotationX, rotationY, rotationZ);
             }

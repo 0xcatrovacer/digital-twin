@@ -8,9 +8,9 @@ sensor_data = {
     'acceleration_x': 1.0,
     'acceleration_y': 2.0,
     'acceleration_z': 3.0,
-    'gyroscope_x': 1.1,
-    'gyroscope_y': 2.0,
-    'gyroscope_z': 7.0,
+    'gyroscope_x': 0.0,
+    'gyroscope_y': 0.0,
+    'gyroscope_z': 0.0,
 }
 
 values = [str(value).encode('utf-8') for value in sensor_data.values()]
